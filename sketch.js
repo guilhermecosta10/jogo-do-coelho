@@ -12,6 +12,14 @@ let world;
 var ground;
 var fruta;
 var rope;
+var bgImg, frutaImg, coelhoImg;
+var botao;
+
+function preload(){
+  bgImg = loadImage("background.png");
+  frutaImg = loadImage("melon.png");
+  coelhoImg = loadImage("Rabbit-01.png");
+}
 
 function setup() 
 {
@@ -24,10 +32,16 @@ function setup()
 
   rectMode(CENTER);
   ellipseMode(RADIUS);
+  imageMode(CENTER);
   textSize(50)
 
   fruta = Bodies.circle(200,200,10);
   Composite.add(rope.body,fruta);
+
+  botao = createImg('cut_btn.png');
+  botao.position(220,30);
+  botao.size(50,50);
+  //botao.mouseClicked(função);
 
 }
 
@@ -35,10 +49,12 @@ function draw()
 {
   background(51);
   ground.show();
+
+  image(bgImg, width/2, height/2, 500, 700);
   
   Engine.update(engine);
 
-  ellipse(fruta.position.x, fruta.position.y, 10);
+  image(frutaImg, fruta.position.x, fruta.position.y, 60,60);
 
   rope.show();
 
