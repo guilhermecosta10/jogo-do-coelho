@@ -12,10 +12,13 @@ let world;
 var ground;
 var fruta;
 var rope;
+var coelho;
 var bgImg, frutaImg, coelhoImg;
 var botao;
+var link;
 
-function preload(){
+function preload()
+{
   bgImg = loadImage("background.png");
   frutaImg = loadImage("melon.png");
   coelhoImg = loadImage("Rabbit-01.png");
@@ -28,7 +31,7 @@ function setup()
   engine = Engine.create();
   world = engine.world;
   ground = new Ground(200,680,600,20);
-  rope = new Rope(8,{x: 200, y: 170});
+  rope = new Rope(8,{x: 240, y: 60});
 
   rectMode(CENTER);
   ellipseMode(RADIUS);
@@ -41,7 +44,13 @@ function setup()
   botao = createImg('cut_btn.png');
   botao.position(220,30);
   botao.size(50,50);
-  //botao.mouseClicked(função);
+  botao.mouseClicked(cair);
+
+  link = new Link(rope, fruta);
+
+  coelho = createSprite(220,600,10,10);
+  coelho.addImage(coelhoImg);
+  coelho.scale = 0.2
 
 }
 
@@ -59,7 +68,16 @@ function draw()
   rope.show();
 
   
-
- 
+  drawSprites();
    
+}
+
+
+
+
+function cair() 
+{
+  link.cortar();
+  rope.break();
+  link = null;
 }
