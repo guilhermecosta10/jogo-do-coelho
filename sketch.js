@@ -16,12 +16,19 @@ var coelho;
 var bgImg, frutaImg, coelhoImg;
 var botao;
 var link;
+var comendoImg, tristeImg, piscandoImg;
 
 function preload()
 {
   bgImg = loadImage("background.png");
   frutaImg = loadImage("melon.png");
   coelhoImg = loadImage("Rabbit-01.png");
+  comendoImg = loadAnimation("eat_0.png", "eat_1.png", "eat_2.png", "eat_3.png", "eat_4.png");
+  tristeImg = loadAnimation("sad_1.png", "sad_2.png", "sad_3.png");
+  piscandoImg = loadAnimation("blink_1.png", "blink_2.png", "blink_3.png");
+
+  comendoImg.playing = true;
+  comendoImg.looping = false;
 }
 
 function setup() 
@@ -48,8 +55,10 @@ function setup()
 
   link = new Link(rope, fruta);
 
+  comendoImg.frameDelay = 20;
+
   coelho = createSprite(220,600,10,10);
-  coelho.addImage(coelhoImg);
+  coelho.addAnimation('comendo', comendoImg);
   coelho.scale = 0.2
 
 }
