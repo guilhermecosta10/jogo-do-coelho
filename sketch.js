@@ -29,6 +29,11 @@ function preload()
 
   comendoImg.playing = true;
   comendoImg.looping = false;
+  tristeImg.playing = true;
+  tristeImg.looping = false;
+  piscandoImg.playing = true;
+  piscandoImg.looping = true;
+
 }
 
 function setup() 
@@ -56,10 +61,15 @@ function setup()
   link = new Link(rope, fruta);
 
   comendoImg.frameDelay = 20;
+  tristeImg.frameDelay = 40;
+  piscandoImg.frameDelay = 10;
 
-  coelho = createSprite(220,600,10,10);
+  coelho = createSprite(100,600,10,10);
   coelho.addAnimation('comendo', comendoImg);
   coelho.scale = 0.2
+  coelho.addAnimation('triste', tristeImg);
+  coelho.addAnimation('piscando', piscandoImg);
+  coelho.changeAnimation('piscando');
 
 }
 
@@ -72,15 +82,26 @@ function draw()
   
   Engine.update(engine);
 
-  image(frutaImg, fruta.position.x, fruta.position.y, 60,60);
+  if(fruta != null)
+  {
+    image(frutaImg, fruta.position.x, fruta.position.y, 60,60);
+  }
 
   rope.show();
 
+  if(colidir(fruta, coelho) == true)
+  {
+    coelho.changeAnimation('comendo');
+  }
+
+  if(colidir(fruta, ground.body) == true)
+  {
+    coelho.changeAnimation('triste');
+  }
   
   drawSprites();
    
 }
-
 
 
 
@@ -89,4 +110,25 @@ function cair()
   link.cortar();
   rope.break();
   link = null;
+}
+
+
+
+function colidir(melancia, coelho)
+{
+  if(melancia != null)
+  {
+    var d = dist(melancia.position.x, melancia.position.y, coelho.position.x, coelho.position.y);
+    if(d <= 80) 
+    {
+      World.remove(engine.world, fruta);
+      fruta = null;
+      return true;
+    }
+
+    else
+    {
+      return false;
+    }
+  }
 }
