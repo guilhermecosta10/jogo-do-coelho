@@ -17,6 +17,9 @@ var bgImg, frutaImg, coelhoImg;
 var botao;
 var link;
 var comendoImg, tristeImg, piscandoImg;
+var backSound, cutSound, sadSound, eatSound, airSound;
+var mute, muteImg;
+var botaoBalao;
 
 function preload()
 {
@@ -26,6 +29,12 @@ function preload()
   comendoImg = loadAnimation("eat_0.png", "eat_1.png", "eat_2.png", "eat_3.png", "eat_4.png");
   tristeImg = loadAnimation("sad_1.png", "sad_2.png", "sad_3.png");
   piscandoImg = loadAnimation("blink_1.png", "blink_2.png", "blink_3.png");
+  muteImg = loadImage("mute.png");
+  backSound = loadSound("sound1.mp3");
+  cutSound = loadSound("rope_cut.mp3");
+  sadSound = loadSound("sad.wav");
+  eatSound = loadSound("eating_sound.mp3");
+  airSound = loadSound("air.wav");
 
   comendoImg.playing = true;
   comendoImg.looping = false;
@@ -40,10 +49,14 @@ function setup()
 {
   createCanvas(500,700);
   frameRate(80);
+
+  backSound.play();
+  backSound.setVolume(0.5);
+
   engine = Engine.create();
   world = engine.world;
   ground = new Ground(200,680,600,20);
-  rope = new Rope(8,{x: 240, y: 60});
+  rope = new Rope(6,{x: 240, y: 60});
 
   rectMode(CENTER);
   ellipseMode(RADIUS);
@@ -58,18 +71,29 @@ function setup()
   botao.size(50,50);
   botao.mouseClicked(cair);
 
+  mute = createImg('mute.png');
+  mute.position(70,80);
+  mute.size(25,25);
+  mute.mouseClicked(fmute);
+
+  botaoBalao = createImg('balloon.png');
+  botaoBalao.position(50,260);
+  botaoBalao.size(70,70);
+  botaoBalao.mouseClicked(soprar);
+
   link = new Link(rope, fruta);
 
   comendoImg.frameDelay = 20;
   tristeImg.frameDelay = 40;
   piscandoImg.frameDelay = 10;
 
-  coelho = createSprite(100,600,10,10);
+  coelho = createSprite(300,600,10,10);
   coelho.addAnimation('comendo', comendoImg);
   coelho.scale = 0.2
   coelho.addAnimation('triste', tristeImg);
   coelho.addAnimation('piscando', piscandoImg);
   coelho.changeAnimation('piscando');
+
 
 }
 
@@ -92,11 +116,17 @@ function draw()
   if(colidir(fruta, coelho) == true)
   {
     coelho.changeAnimation('comendo');
+    backSound.stop();
+    eatSound.play();
+    
   }
 
-  if(colidir(fruta, ground.body) == true)
+  if(fruta != null && fruta.position.y >= 650)
   {
     coelho.changeAnimation('triste');
+    backSound.stop();
+    sadSound.play();
+    fruta = null;
   }
   
   drawSprites();
@@ -104,12 +134,15 @@ function draw()
 }
 
 
-
 function cair() 
 {
   link.cortar();
   rope.break();
   link = null;
+
+  cutSound.play();
+  cutSound.setVolume(0.5);
+
 }
 
 
@@ -132,3 +165,27 @@ function colidir(melancia, coelho)
     }
   }
 }
+
+
+
+function fmute() 
+{
+  if(backSound.isPlaying())
+  {
+    backSound.stop();
+  }
+
+  else
+    backSound.play();
+  
+}
+
+
+
+function soprar() 
+{
+  Matter.Body.applyForce(fruta,{x: 0, y: 0},{x: 0.02, y: 0});
+  airSound.play();
+}
+
+
