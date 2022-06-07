@@ -11,11 +11,11 @@ let engine;
 let world;
 var ground;
 var fruta;
-var rope, rope2;
+var rope, rope2, rope3;
 var coelho;
 var bgImg, frutaImg, coelhoImg;
-var botao, botao2;
-var link,link2;
+var botao, botao2, botao3;
+var link,link2, link3;
 var comendoImg, tristeImg, piscandoImg;
 var backSound, cutSound, sadSound, eatSound, airSound;
 var mute, muteImg;
@@ -68,16 +68,17 @@ function setup()
 
   engine = Engine.create();
   world = engine.world;
-  ground = new Ground(200,canH-60,600,20);
+  ground = new Ground(200,canH,600,20);
   rope = new Rope(4,{x: 240, y: 50});
   rope2 = new Rope(5,{x: 140, y: 30});
+  rope3 = new Rope(5,{x: 70, y: 40});
 
   rectMode(CENTER);
   ellipseMode(RADIUS);
   imageMode(CENTER);
   textSize(50)
 
-  fruta = Bodies.circle(200,200,10);
+  fruta = Bodies.circle(200,250,10);
   Composite.add(rope.body,fruta);
 
   botao = createImg('cut_btn.png');
@@ -90,24 +91,30 @@ function setup()
   botao2.size(50,50);
   botao2.mouseClicked(cair2);
 
+  botao3 = createImg('cut_btn.png');
+  botao3.position(70,20);
+  botao3.size(50,50);
+  botao3.mouseClicked(cair3);
+
   mute = createImg('mute.png');
   mute.position(70,80);
   mute.size(25,25);
   mute.mouseClicked(fmute);
 
   botaoBalao = createImg('balloon.png');
-  botaoBalao.position(50,260);
+  botaoBalao.position(50,230);
   botaoBalao.size(70,70);
   botaoBalao.mouseClicked(soprar);
 
   link = new Link(rope, fruta);
   link2 = new Link(rope2, fruta);
+  link3 = new Link(rope3, fruta);
 
   comendoImg.frameDelay = 20;
   tristeImg.frameDelay = 40;
   piscandoImg.frameDelay = 10;
 
-  coelho = createSprite(170,canH-80,10,10);
+  coelho = createSprite(170,canH-150,10,10);
   coelho.addAnimation('comendo', comendoImg);
   coelho.scale = 0.2
   coelho.addAnimation('triste', tristeImg);
@@ -133,16 +140,16 @@ function draw()
 
   rope.show();
   rope2.show();
+  rope3.show();
 
   if(colidir(fruta, coelho) == true)
   {
     coelho.changeAnimation('comendo');
     backSound.stop();
     eatSound.play();
-    
   }
 
-  if(fruta != null && fruta.position.y >= 650)
+  if(fruta != null && fruta.position.y >= canH-20)
   {
     coelho.changeAnimation('triste');
     backSound.stop();
@@ -175,6 +182,16 @@ function cair2()
   cutSound.setVolume(0.5);
 }
 
+function cair3() 
+{
+  link3.cortar();
+  rope3.break();
+  link3 = null;
+
+  cutSound.play();
+  cutSound.setVolume(0.5);
+}
+
 
 
 function colidir(melancia, coelho)
@@ -182,7 +199,7 @@ function colidir(melancia, coelho)
   if(melancia != null)
   {
     var d = dist(melancia.position.x, melancia.position.y, coelho.position.x, coelho.position.y);
-    if(d <= 80) 
+    if(d <= 50) 
     {
       World.remove(engine.world, fruta);
       fruta = null;
@@ -209,7 +226,6 @@ function fmute()
     backSound.play();
   
 }
-
 
 
 function soprar() 
