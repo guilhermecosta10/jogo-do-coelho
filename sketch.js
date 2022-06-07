@@ -11,15 +11,16 @@ let engine;
 let world;
 var ground;
 var fruta;
-var rope;
+var rope, rope2;
 var coelho;
 var bgImg, frutaImg, coelhoImg;
-var botao;
-var link;
+var botao, botao2;
+var link,link2;
 var comendoImg, tristeImg, piscandoImg;
 var backSound, cutSound, sadSound, eatSound, airSound;
 var mute, muteImg;
 var botaoBalao;
+var canW, canH;
 
 function preload()
 {
@@ -47,7 +48,19 @@ function preload()
 
 function setup() 
 {
-  createCanvas(500,700);
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(isMobile){
+    canW = displayWidth-50;
+    canH = displayHeight-50;
+    createCanvas(canW,canH);
+  }
+  else{
+    canW = windowWidth-50;
+    canH = windowHeight-50;
+    createCanvas(canW,canH);
+  }
+  
   frameRate(80);
 
   backSound.play();
@@ -55,8 +68,9 @@ function setup()
 
   engine = Engine.create();
   world = engine.world;
-  ground = new Ground(200,680,600,20);
-  rope = new Rope(6,{x: 240, y: 60});
+  ground = new Ground(200,canH-60,600,20);
+  rope = new Rope(4,{x: 240, y: 50});
+  rope2 = new Rope(5,{x: 140, y: 30});
 
   rectMode(CENTER);
   ellipseMode(RADIUS);
@@ -71,6 +85,11 @@ function setup()
   botao.size(50,50);
   botao.mouseClicked(cair);
 
+  botao2 = createImg('cut_btn.png');
+  botao2.position(120,15);
+  botao2.size(50,50);
+  botao2.mouseClicked(cair2);
+
   mute = createImg('mute.png');
   mute.position(70,80);
   mute.size(25,25);
@@ -82,12 +101,13 @@ function setup()
   botaoBalao.mouseClicked(soprar);
 
   link = new Link(rope, fruta);
+  link2 = new Link(rope2, fruta);
 
   comendoImg.frameDelay = 20;
   tristeImg.frameDelay = 40;
   piscandoImg.frameDelay = 10;
 
-  coelho = createSprite(300,600,10,10);
+  coelho = createSprite(170,canH-80,10,10);
   coelho.addAnimation('comendo', comendoImg);
   coelho.scale = 0.2
   coelho.addAnimation('triste', tristeImg);
@@ -102,7 +122,7 @@ function draw()
   background(51);
   ground.show();
 
-  image(bgImg, width/2, height/2, 500, 700);
+  image(bgImg, canW/2, canH/2, canW, canH);
   
   Engine.update(engine);
 
@@ -112,6 +132,7 @@ function draw()
   }
 
   rope.show();
+  rope2.show();
 
   if(colidir(fruta, coelho) == true)
   {
@@ -142,7 +163,16 @@ function cair()
 
   cutSound.play();
   cutSound.setVolume(0.5);
+}
 
+function cair2() 
+{
+  link2.cortar();
+  rope2.break();
+  link2 = null;
+
+  cutSound.play();
+  cutSound.setVolume(0.5);
 }
 
 
